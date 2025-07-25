@@ -3,7 +3,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 
-public class hi {
+public class appBlocking {
     public static void main(String[] args) {
         changeExecutablePermission("/usr/bin/firefox", "remove");
         changeExecutablePermission("/usr/bin/firefox", "add");
