@@ -5,25 +5,31 @@ import java.nio.file.attribute.PosixFilePermission;
 
 public class appBlocking {
     public static void main(String[] args) {
-        changeExecutablePermission("/usr/bin/firefox", "remove");
-        changeExecutablePermission("/usr/bin/firefox", "add");
+        changeExecutePermissions("/usr/bin/firefox", "remove");
+        changeExecutePermissions("/usr/bin/firefox", "add");
     }
 
-    public static Set<PosixFilePermission> getCurrentPermissions(String appPath) {
-        try {
-            File file = new File(appPath);
-            return Files.getPosixFilePermissions(file.toPath());
+    public static Set<PosixFilePermission> getExecutePermissions(String appPath) {
+        File file = new File(appPath);
+        if (file.exists()) {
+            try {
+                return Files.getPosixFilePermissions(file.toPath());
+            }
+            catch (Exception e) {
+                System.out.println("Yah, something's wrong. Figure it out, I guess...");
+                System.out.println("Error is: " + e);
+            }
         }
-        catch (Exception e) {
-            System.out.println("Yah, something's wrong. Figure it out, I guess...");
+        else {
+            System.out.println("File does not exist: " + appPath);
         }
         return null;
     }
 
-    public static void changeExecutablePermission(String appPath, String option) {
+    public static void changeExecutePermissions(String appPath, String option) {
         File file = new File(appPath);
         if (file.exists()) {
-            Set<PosixFilePermission> perms = getCurrentPermissions(appPath);
+            Set<PosixFilePermission> perms = getExecutePermissions(appPath);
             if (option.equals("remove")) {
                 perms.remove(PosixFilePermission.OWNER_EXECUTE);
                 perms.remove(PosixFilePermission.GROUP_EXECUTE);
@@ -44,6 +50,7 @@ public class appBlocking {
             }
             catch (Exception e) {
                 System.out.println("Execute permission has not been " + option + "-ed for: " + appPath);
+                System.out.println("Error is: " + e);
             }
         }
         else {
