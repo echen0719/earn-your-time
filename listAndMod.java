@@ -23,6 +23,7 @@ public class listAndMod {
                 Process process = peanutButter.start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 lsOutput = reader.readLine();
+                process.waitFor();
             }
             catch (Exception e) {
                     System.out.println("Yah, something's wrong. Figure it out, I guess...");
@@ -48,11 +49,24 @@ public class listAndMod {
         if (fileExists(appPath)) {
             try {
                 if (option.equals("remove")) {
-                    // something
+                    ProcessBuilder chmodRemove = new ProcessBuilder("chmod", "a-x", appPath);
+                    Process process = chmodRemove.start();
+                    process.waitFor();
+
                     System.out.println("Execute permission has been removed for: " + appPath);
                 }
                 else if (option.equals("add")) {
-                    // something
+                    boolean[] originalPermissions = getExecutePermissions(appPath);
+                    String executePermissions = "";
+
+                    if (originalPermissions[0]) executePermissions += "u";
+                    if (originalPermissions[1]) executePermissions += "g";
+                    if (originalPermissions[2]) executePermissions += "o";
+
+                    ProcessBuilder chmodAdd = new ProcessBuilder("chmod", executePermissions + "+x", appPath);
+                    Process process = chmodAdd.start();
+                    process.waitFor();
+
                     System.out.println("Execute permission has been added for: " + appPath);
                 }
                 else {
